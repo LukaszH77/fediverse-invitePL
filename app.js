@@ -11,10 +11,15 @@ import { engine } from "express-handlebars";
 import { I18n } from "i18n";
 import sortArrayOfObjects from "./modules/sortArrayOfObjects.js";
 import indexRoute from "./routes/index.js";
+import aboutRoute from "./routes/about.js";
 import starterpacksRoute from "./routes/starterpacks.js";
 
 Handlebars.registerHelper("ifEquals", (firstArg, secondArg, options) => {
   return firstArg === secondArg ? options.fn(this) : options.inverse(this);
+});
+
+Handlebars.registerHelper("t", function(key) {
+  return new Handlebars.SafeString(i18n.__(key));
 });
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -108,6 +113,7 @@ app.set("view engine", "handlebars");
 app.set("views", "./views");
 
 app.use("/", indexRoute);
+app.use("/about", aboutRoute);
 app.use("/starterpacks", starterpacksRoute);
 
 export default app;
