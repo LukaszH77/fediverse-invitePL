@@ -2,14 +2,11 @@ import { getUrlParam } from "./urlParams.js";
 
 export default () => {
   const langParam = getUrlParam("lang");
-  const hrefs = ["/about"];
+  if (!langParam) return;
 
-  hrefs.forEach((href) => {
-    const link = document.querySelector(`a[href^="${href}"]`);
-    if (link && langParam) {
-      const url = new URL(link.href);
-      url.searchParams.set("lang", langParam);
-      link.href = url.toString();
-    }
+  document.querySelectorAll("a:not([href^='http'])").forEach((link) => {
+    const url = new URL(link.href);
+    url.searchParams.set("lang", langParam);
+    link.href = url.toString();
   });
 };
