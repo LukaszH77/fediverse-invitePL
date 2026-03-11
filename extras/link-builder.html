@@ -1,0 +1,103 @@
+<form id="link-builder">
+
+  <div class="mb-3">
+    <label for="server-domain"
+      class="form-label">Your server (without https://)</label>
+    <input type="text"
+      class="form-control"
+      id="server-domain"
+      placeholder="mastodon.social">
+  </div>
+  <div class="mb-3">
+    <label for="app-ids"
+      class="form-label">Apps</label>
+    <input type="text"
+      class="form-control"
+      id="app-ids"
+      placeholder="1,2,3,5">
+  </div>
+  <div class="form-text">
+    <a href="https://github.com/stefanbohacek/fediverse-invite/blob/main/data/apps.json"
+      target="_blank">See the full list</a>
+  </div>
+  <div class="mb-3">
+    <label for="starter-packs"
+      class="form-label">Fedidevs starter packs</label>
+    <input type="text"
+      class="form-control"
+      id="starter-packs"
+      placeholder="NjQ5,ODI5,OTIw,ODY4">
+  </div>
+  <div class="form-text">
+    <a href="https://fedidevs.com/starter-packs/"
+      target="_blank">Browse starter packs</a>
+  </div>
+  <div class="mb-3">
+    <label for="language"
+      class="form-label">Language</label>
+      <select id="language" class="form-select" aria-label="Default select example">
+        <option selected value="en-us">English (US)</option>
+        <option value="es-us">Español</option>
+      </select>
+  </div>
+  <div class="form-text">
+    <a href="https://github.com/stefanbohacek/fediverse-invite?tab=readme-ov-file#translation"
+      target="_blank">Help with translations</a>
+  </div>
+  <div class="mb-3">
+    <label for="invitation-url"
+      class="form-label">Your invitation link</label>
+    <textarea disabled
+      class="form-control"
+      id="invitation-url"
+      rows="3">https://invite.jointhefediverse.net/?lang=en-us</textarea>
+  </div>
+</form>
+
+<script>
+  const linkBuilderForm = document.getElementById("link-builder");
+
+  linkBuilderForm?.addEventListener("submit", (ev) => {
+    ev.preventDefault();
+  });
+
+  const serverDomainInput = document.getElementById("server-domain");
+  const appIDsInput = document.getElementById("app-ids");
+  const starterPacksInput = document.getElementById("starter-packs");
+  const languageDropdown = document.getElementById("language");
+  const invitationURLField = document.getElementById("invitation-url");
+
+  const updateLink = () => {
+    try {
+      const baseURL = "https://invite.jointhefediverse.net/";
+      const params = new URLSearchParams();
+
+      const server = serverDomainInput?.value.trim();
+      const apps = appIDsInput?.value.trim();
+      const starterpacks = starterPacksInput?.value.trim();
+      const language = languageDropdown?.value.trim() || "en-us";
+
+      if (server?.length) params.set("server", server);
+      if (apps?.length) params.set("apps", apps);
+      if (starterpacks?.length) params.set("starterpacks", starterpacks);
+      params.set("lang", language);
+
+      const queryString = params.toString().replaceAll("%2C", ",");
+
+      if (invitationURLField) {
+        invitationURLField.value = queryString.length
+          ? `${baseURL}?${queryString}`
+          : baseURL;
+      }
+    } catch (err) {
+      console.error("Link builder: failed to build invitation URL.", err);
+      if (invitationURLField) {
+        invitationURLField.value = "";
+      }
+    }
+  };
+
+  [serverDomainInput, appIDsInput, starterPacksInput, languageDropdown].forEach((input) => {
+    input?.addEventListener("input", updateLink);
+  });
+</script>
